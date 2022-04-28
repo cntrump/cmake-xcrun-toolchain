@@ -211,40 +211,20 @@ set(CMAKE_OSX_SDKROOT_DIR ${CMAKE_OSX_SDKROOT_DIR} CACHE PATH "Specifies the def
 set(ENV{DEVELOPER_DIR} ${CMAKE_OSX_DEVELOPER_DIR})
 set(ENV{SDKROOT} ${CMAKE_OSX_SDKROOT_DIR})
 
-execute_process(COMMAND xcrun --find clang
-                OUTPUT_VARIABLE CMAKE_ASM_COMPILER
-                OUTPUT_STRIP_TRAILING_WHITESPACE)
-set(CMAKE_ASM_COMPILER ${CMAKE_ASM_COMPILER} CACHE FILEPATH "Path to a program.")
+macro(xcrun_find_program _program _variable)
+  execute_process(COMMAND xcrun --find ${_program}
+                  OUTPUT_VARIABLE _program_path
+                  OUTPUT_STRIP_TRAILING_WHITESPACE)
+  set(${_variable} ${_program_path} CACHE FILEPATH "Path to ${_program}.")
+endmacro()
 
-execute_process(COMMAND xcrun --find clang
-                OUTPUT_VARIABLE CMAKE_C_COMPILER
-                OUTPUT_STRIP_TRAILING_WHITESPACE)
-set(CMAKE_C_COMPILER ${CMAKE_C_COMPILER} CACHE FILEPATH "Path to a program.")
-
-execute_process(COMMAND xcrun --find clang++
-                OUTPUT_VARIABLE CMAKE_CXX_COMPILER
-                OUTPUT_STRIP_TRAILING_WHITESPACE)
-set(CMAKE_CXX_COMPILER ${CMAKE_CXX_COMPILER} CACHE FILEPATH "Path to a program.")
-
-execute_process(COMMAND xcrun --find swiftc
-                OUTPUT_VARIABLE CMAKE_Swift_COMPILER
-                OUTPUT_STRIP_TRAILING_WHITESPACE)
-set(CMAKE_Swift_COMPILER ${CMAKE_Swift_COMPILER} CACHE FILEPATH "Path to a program.")
-
-execute_process(COMMAND xcrun --find ld
-                OUTPUT_VARIABLE CMAKE_LINKER
-                OUTPUT_STRIP_TRAILING_WHITESPACE)
-set(CMAKE_LINKER ${CMAKE_LINKER} CACHE FILEPATH "Path to a program.")
-
-execute_process(COMMAND xcrun --find ar
-                OUTPUT_VARIABLE CMAKE_AR
-                OUTPUT_STRIP_TRAILING_WHITESPACE)
-set(CMAKE_AR ${CMAKE_AR} CACHE FILEPATH "Path to a program.")
-
-execute_process(COMMAND xcrun --find ranlib
-                OUTPUT_VARIABLE CMAKE_RANLIB
-                OUTPUT_STRIP_TRAILING_WHITESPACE)
-set(CMAKE_RANLIB ${CMAKE_RANLIB} CACHE FILEPATH "Path to a program.")
+xcrun_find_program(clang CMAKE_ASM_COMPILER)
+xcrun_find_program(clang CMAKE_C_COMPILER)
+xcrun_find_program(clang++ CMAKE_CXX_COMPILER)
+xcrun_find_program(swiftc CMAKE_Swift_COMPILER)
+xcrun_find_program(ld CMAKE_LINKER)
+xcrun_find_program(ar CMAKE_AR)
+xcrun_find_program(ranlib CMAKE_RANLIB)
 
 foreach(arch ${_archs})
   if(NOT CMAKE_ASM_FLAGS MATCHES "-arch ${arch}")
