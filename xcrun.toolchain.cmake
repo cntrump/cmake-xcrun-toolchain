@@ -259,3 +259,7 @@ endif()
 if(NOT DEFINED CMAKE_Swift_LANGUAGE_VERSION)
   set(CMAKE_Swift_LANGUAGE_VERSION 5 CACHE STRING "Set to the Swift language version number. If not set, the oldest legacy version known to be available in the host Xcode version is assumed.")
 endif()
+
+macro(aux_swift_source_directory _dir _variable)
+  file(GLOB ${_variable} ${_dir}/*.swift)
+endmacro()
