@@ -14,11 +14,14 @@ Example:
 
 ## Build for macOS 10.13 contains `x86_64` and `arm64`:
 ```bash
-cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE=$(pwd)/xcrun.toolchain.cmake \
+cmake -B build -G Ninja \
+      -DCMAKE_TOOLCHAIN_FILE=$(pwd)/xcrun.toolchain.cmake \
       -DCMAKE_OSX_TRIPLE_OS=macosx \
       -DCMAKE_OSX_TRIPLE_OS_VERSION=10.13 \
       -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
       ...
+
+ninja -C build
 ```
 
 ## Build for macCatalyst contains `x86_64` and `arm64`:
@@ -33,62 +36,83 @@ iOSMac | macOS
 14.0   | 11.0
 
 ```bash
-cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE=$(pwd)/xcrun.toolchain.cmake \
+cmake -B build -G Ninja \
+      -DCMAKE_TOOLCHAIN_FILE=$(pwd)/xcrun.toolchain.cmake \
       -DCMAKE_OSX_TRIPLE_OS=ios \
       -DCMAKE_OSX_TRIPLE_OS_VERSION=13.1 \
       -DCMAKE_OSX_TRIPLE_ENVIRONMENT=macabi \
       ...
+
+ninja -C build
 ```
 
 ## Build for iOS 10 contains `armv7` and `arm64`:
 ```bash
-cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE=$(pwd)/xcrun.toolchain.cmake \
+cmake -B build -G Ninja \
+      -DCMAKE_TOOLCHAIN_FILE=$(pwd)/xcrun.toolchain.cmake \
       -DCMAKE_OSX_TRIPLE_OS=ios \
       -DCMAKE_OSX_TRIPLE_OS_VERSION=10.0 \
       ...
+
+ninja -C build
 ```
 
 ## Build for iOS 10 Simulator only contains `x86_64` and `arm64`:
 ```bash
-cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE=$(pwd)/xcrun.toolchain.cmake \
+cmake -B build -G Ninja \
+      -DCMAKE_TOOLCHAIN_FILE=$(pwd)/xcrun.toolchain.cmake \
       -DCMAKE_OSX_TRIPLE_OS=ios \
       -DCMAKE_OSX_TRIPLE_OS_VERSION=10.0 \
       -DCMAKE_OSX_TRIPLE_ENVIRONMENT=simulator \
       -DCMAKE_OSX_EXCLUDED_ARCHITECTURES=i386 \
       ...
+
+ninja -C build
 ```
 
 ## Build for tvOS 10 contains `armv7` and `arm64`:
 ```bash
-CMake -G Ninja -DCMAKE_TOOLCHAIN_FILE=$(pwd)/xcrun.toolchain.cmake \
+CMake -B build -G Ninja \
+      -DCMAKE_TOOLCHAIN_FILE=$(pwd)/xcrun.toolchain.cmake \
       -DCMAKE_OSX_TRIPLE_OS=tvos \
       -DCMAKE_OSX_TRIPLE_OS_VERSION=10.0 \
       ...
+
+ninja -C build
 ```
 
 ## Build for tvOS 10 Simulator only contains `x86_64` and `arm64`:
 ```bash
-CMake -G Ninja -DCMAKE_TOOLCHAIN_FILE=$(pwd)/xcrun.toolchain.cmake \
+CMake -B build -G Ninja \
+      -DCMAKE_TOOLCHAIN_FILE=$(pwd)/xcrun.toolchain.cmake \
       -DCMAKE_OSX_TRIPLE_OS=tvos \
       -DCMAKE_OSX_TRIPLE_OS_VERSION=10.0 \
       -DCMAKE_OSX_TRIPLE_ENVIRONMENT=simulator \
       -DCMAKE_OSX_EXCLUDED_ARCHITECTURES=i386 \
       ...
+
+ninja -C build
 ```
 
 ## Build for watchOS 2.0 contains `armv7k` and `arm64_32`:
 ```bash
-CMake -G Ninja -DCMAKE_TOOLCHAIN_FILE=$(pwd)/xcrun.toolchain.cmake \
+CMake -B build -G Ninja \
+      -DCMAKE_TOOLCHAIN_FILE=$(pwd)/xcrun.toolchain.cmake \
       -DCMAKE_OSX_TRIPLE_OS=watchos \
       -DCMAKE_OSX_TRIPLE_OS_VERSION=2.0 \
       ...
+
+ninja -C build
 ```
 
 ## Build for watchOS 2.0 Simulator contains `i386`, `x86_64` and `arm64`:
 ```bash
-CMake -G Ninja -DCMAKE_TOOLCHAIN_FILE=$(pwd)/xcrun.toolchain.cmake \
+CMake -B build -G Ninja \
+      -DCMAKE_TOOLCHAIN_FILE=$(pwd)/xcrun.toolchain.cmake \
       -DCMAKE_OSX_TRIPLE_OS=watchos \
       -DCMAKE_OSX_TRIPLE_OS_VERSION=10.0 \
       -DCMAKE_OSX_TRIPLE_ENVIRONMENT=simulator \
       ...
+      
+ninja -C build
 ```
