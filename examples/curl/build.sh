@@ -15,6 +15,7 @@ cmake -S curl -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE=$(pwd)/../../xcrun.toolch
         -DCURL_DEFAULT_SSL_BACKEND=secure-transport \
         -DENABLE_IPV6=ON \
         -DCURL_USE_LIBPSL=OFF \
-        -DCURL_DISABLE_LDAP=ON
+        -DCURL_DISABLE_LDAP=ON \
+        -DCURL_USE_SYSROOT_LIBZ=ON
 
 ninja -C build
