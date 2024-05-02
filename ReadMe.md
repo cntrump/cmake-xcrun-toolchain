@@ -12,12 +12,16 @@ Value of `--target ${triple}` and `CMAKE_OSX_SYSROOT` are computed based on `CMA
 
 Example:
 
-1. build for macOS 10.13
+## Build for macOS 10.13 contains `x86_64` and `arm64`:
 ```bash
-cmake -DCMAKE_OSX_TRIPLE_OS=macosx -DCMAKE_OSX_TRIPLE_OS_VERSION=10.13
+cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE=$(pwd)/xcrun.toolchain.cmake \
+      -DCMAKE_OSX_TRIPLE_OS=macosx \
+      -DCMAKE_OSX_TRIPLE_OS_VERSION=10.13 \
+      -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
+      ...
 ```
 
-2. build for macCatalyst contains x86_64 and arm64:
+## Build for macCatalyst contains `x86_64` and `arm64`:
 
 iOSMac | macOS
 -------|--------
@@ -29,42 +33,62 @@ iOSMac | macOS
 14.0   | 11.0
 
 ```bash
-cmake -DCMAKE_OSX_TRIPLE_OS=ios \
+cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE=$(pwd)/xcrun.toolchain.cmake \
+      -DCMAKE_OSX_TRIPLE_OS=ios \
       -DCMAKE_OSX_TRIPLE_OS_VERSION=13.1 \
-      -DCMAKE_OSX_TRIPLE_ENVIRONMENT=macabi
+      -DCMAKE_OSX_TRIPLE_ENVIRONMENT=macabi \
+      ...
 ```
 
-3. build for iOS 10 contains armv7 and arm64:
+## Build for iOS 10 contains `armv7` and `arm64`:
 ```bash
-cmake -DCMAKE_OSX_TRIPLE_OS=ios -DCMAKE_OSX_TRIPLE_OS_VERSION=10.0
+cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE=$(pwd)/xcrun.toolchain.cmake \
+      -DCMAKE_OSX_TRIPLE_OS=ios \
+      -DCMAKE_OSX_TRIPLE_OS_VERSION=10.0 \
+      ...
 ```
 
-4. build for iOS 10 Simulator only contains x86_64 and arm64:
+## Build for iOS 10 Simulator only contains `x86_64` and `arm64`:
 ```bash
-cmake -DCMAKE_OSX_TRIPLE_OS=ios -DCMAKE_OSX_TRIPLE_OS_VERSION=10.0 \
+cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE=$(pwd)/xcrun.toolchain.cmake \
+      -DCMAKE_OSX_TRIPLE_OS=ios \
+      -DCMAKE_OSX_TRIPLE_OS_VERSION=10.0 \
       -DCMAKE_OSX_TRIPLE_ENVIRONMENT=simulator \
-      -DCMAKE_OSX_EXCLUDED_ARCHITECTURES=i386
+      -DCMAKE_OSX_EXCLUDED_ARCHITECTURES=i386 \
+      ...
 ```
 
-5. build for tvOS 10 contains armv7 and arm64:
+## Build for tvOS 10 contains `armv7` and `arm64`:
 ```bash
-CMake -DCMAKE_OSX_TRIPLE_OS=tvos -DCMAKE_OSX_TRIPLE_OS_VERSION=10.0
+CMake -G Ninja -DCMAKE_TOOLCHAIN_FILE=$(pwd)/xcrun.toolchain.cmake \
+      -DCMAKE_OSX_TRIPLE_OS=tvos \
+      -DCMAKE_OSX_TRIPLE_OS_VERSION=10.0 \
+      ...
 ```
 
-6. build for tvOS 10 Simulator only contains x86_64 and arm64:
+## Build for tvOS 10 Simulator only contains `x86_64` and `arm64`:
 ```bash
-CMake -DCMAKE_OSX_TRIPLE_OS=tvos -DCMAKE_OSX_TRIPLE_OS_VERSION=10.0 \
+CMake -G Ninja -DCMAKE_TOOLCHAIN_FILE=$(pwd)/xcrun.toolchain.cmake \
+      -DCMAKE_OSX_TRIPLE_OS=tvos \
+      -DCMAKE_OSX_TRIPLE_OS_VERSION=10.0 \
       -DCMAKE_OSX_TRIPLE_ENVIRONMENT=simulator \
-      -DCMAKE_OSX_EXCLUDED_ARCHITECTURES=i386
+      -DCMAKE_OSX_EXCLUDED_ARCHITECTURES=i386 \
+      ...
 ```
 
-7. build for watchOS 2.0 contains armv7k and arm64_32:
+## Build for watchOS 2.0 contains `armv7k` and `arm64_32`:
 ```bash
-CMake -DCMAKE_OSX_TRIPLE_OS=watchos -DCMAKE_OSX_TRIPLE_OS_VERSION=2.0
+CMake -G Ninja -DCMAKE_TOOLCHAIN_FILE=$(pwd)/xcrun.toolchain.cmake \
+      -DCMAKE_OSX_TRIPLE_OS=watchos \
+      -DCMAKE_OSX_TRIPLE_OS_VERSION=2.0 \
+      ...
 ```
 
-8. build for watchOS 2.0 Simulator contains i386, x86_64 and arm64:
+## Build for watchOS 2.0 Simulator contains `i386`, `x86_64` and `arm64`:
 ```bash
-CMake -DCMAKE_OSX_TRIPLE_OS=watchos -DCMAKE_OSX_TRIPLE_OS_VERSION=10.0 \
-      -DCMAKE_OSX_TRIPLE_ENVIRONMENT=simulator
+CMake -G Ninja -DCMAKE_TOOLCHAIN_FILE=$(pwd)/xcrun.toolchain.cmake \
+      -DCMAKE_OSX_TRIPLE_OS=watchos \
+      -DCMAKE_OSX_TRIPLE_OS_VERSION=10.0 \
+      -DCMAKE_OSX_TRIPLE_ENVIRONMENT=simulator \
+      ...
 ```
