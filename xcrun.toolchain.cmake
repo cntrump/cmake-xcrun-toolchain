@@ -51,7 +51,8 @@ set(_supported_triple_os_list
   macosx;
   ios;
   tvos;
-  watchos
+  watchos;
+  xros
 )
 
 list(FIND _supported_triple_os_list ${CMAKE_OSX_TRIPLE_OS} contains_os)
@@ -91,6 +92,11 @@ if(_triple MATCHES watchos)
   set(_builtin_version_min 2.0)
 endif()
 
+if(_triple MATCHES xros)
+  set(_sdk xros)
+  set(_builtin_version_min 1.0)
+endif()
+
 if(NOT _triple MATCHES macosx)
   if(_triple MATCHES macabi)
     set(_sdk macosx)
@@ -111,8 +117,11 @@ set(_supported_sdk_list
   appletvos;
   appletvsimulator;
   watchos;
-  watchsimulator
+  watchsimulator;
+  xros;
+  xrsimulator;
 )
+
 list(FIND _supported_sdk_list ${_sdk} contains_sdk)
 if(contains_sdk EQUAL -1)
   message(FATAL_ERROR "Invalid SDK: ${_sdk}.")
@@ -138,6 +147,8 @@ set(_tvos_archs arm64)
 set(_tvossim_archs x86_64;arm64)
 set(_watchos_archs armv7k;arm64_32)
 set(_watchossim_archs i386;x86_64;arm64)
+set(_xros_archs arm64)
+set(_xrossim_archs x86_64;arm64)
 
 if(_sdk MATCHES macosx)
   set(_architectures ${_macosx_archs})
@@ -153,6 +164,10 @@ elseif(_sdk MATCHES watchos)
   set(_architectures ${_watchos_archs})
 elseif(_sdk MATCHES watchsimualtor)
   set(_architectures ${_watchossim_archs})
+elseif(_sdk MATCHES xros)
+  set(_architectures ${_xros_archs})
+elseif(_sdk MATCHES xrsimulator)
+  set(_architectures ${_xrossim_archs})
 endif()
 
 set(_archs "")
