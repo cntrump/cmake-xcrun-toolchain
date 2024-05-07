@@ -33,19 +33,19 @@ if(NOT CMAKE_HOST_SYSTEM_NAME STREQUAL Darwin)
   message(FATAL_ERROR "Must be run on macOS platform.")
 endif()
 
-set(CMAKE_GENERATOR Ninja CACHE STRING "Specifies the CMake default generator to use when no generator is supplied with -G.")
+set(CMAKE_GENERATOR Ninja)
 
 if(NOT DEFINED CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release CACHE STRING "Typical values include Debug, Release, RelWithDebInfo and MinSizeRel, but custom build types can also be defined.")
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "Specifies the build type on single-configuration generators.")
 endif()
 
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
-set(CMAKE_OSX_DEPLOYMENT_TARGET "" CACHE STRING "Specify the minimum version of the target platform.")
+set(CMAKE_OSX_DEPLOYMENT_TARGET "")
 
-set(CMAKE_OSX_TRIPLE_OS macosx CACHE STRING "Specify the os of triple.")
-set(CMAKE_OSX_TRIPLE_ENVIRONMENT "" CACHE STRING "Specify the environment of triple.")
-set(CMAKE_OSX_EXCLUDED_ARCHITECTURES "" CACHE STRING "Specify the excluded architectures.")
+set(CMAKE_OSX_TRIPLE_OS macosx)
+set(CMAKE_OSX_TRIPLE_ENVIRONMENT "")
+set(CMAKE_OSX_EXCLUDED_ARCHITECTURES "")
 
 set(_supported_triple_os_list
   macosx;
@@ -65,7 +65,7 @@ set(_triple ${_vendor}-${CMAKE_OSX_TRIPLE_OS}${CMAKE_OSX_TRIPLE_OS_VERSION})
 
 if(CMAKE_OSX_TRIPLE_OS STREQUAL macosx)
    # macosx has not triple environment
-  set(CMAKE_OSX_TRIPLE_ENVIRONMENT "" CACHE STRING "Specify the environment of triple.")
+  set(CMAKE_OSX_TRIPLE_ENVIRONMENT "")
 endif()
 
 if(NOT CMAKE_OSX_TRIPLE_ENVIRONMENT STREQUAL "")
@@ -129,10 +129,10 @@ endif()
 
 message(STATUS "SDK: ${_sdk}")
 
-set(CMAKE_OSX_SYSROOT ${_sdk} CACHE STRING "Specify the location or name of the macOS platform SDK to be used.")
+set(CMAKE_OSX_SYSROOT ${_sdk} CACHE STRING "Specify the location or name of the Apple platform SDK to be used.")
 
 if(NOT DEFINED CMAKE_OSX_TRIPLE_OS_VERSION)
-  set(CMAKE_OSX_TRIPLE_OS_VERSION ${_builtin_version_min} CACHE STRING "Specify the minimum version of the triple OS platform.")
+  set(CMAKE_OSX_TRIPLE_OS_VERSION ${_builtin_version_min})
 endif()
 
 set(_triple ${_vendor}-${CMAKE_OSX_TRIPLE_OS}${CMAKE_OSX_TRIPLE_OS_VERSION})
@@ -208,20 +208,20 @@ endif()
 
 message(STATUS "Triple: ${_triple}")
 
-set(CMAKE_ASM_COMPILER_TARGET ${_triple} CACHE STRING "ASM target for cross-compiling, if supported.")
-set(CMAKE_C_COMPILER_TARGET ${_triple} CACHE STRING "C target for cross-compiling, if supported.")
-set(CMAKE_CXX_COMPILER_TARGET ${_triple} CACHE STRING "C++ target for cross-compiling, if supported.")
-set(CMAKE_Swift_COMPILER_TARGET ${_triple} CACHE STRING "Swift target for cross-compiling, if supported.")
+set(CMAKE_ASM_COMPILER_TARGET ${_triple})
+set(CMAKE_C_COMPILER_TARGET ${_triple})
+set(CMAKE_CXX_COMPILER_TARGET ${_triple})
+set(CMAKE_Swift_COMPILER_TARGET ${_triple})
 
 execute_process(COMMAND xcode-select -p
                 OUTPUT_VARIABLE CMAKE_OSX_DEVELOPER_DIR
                 OUTPUT_STRIP_TRAILING_WHITESPACE)
-set(CMAKE_OSX_DEVELOPER_DIR ${CMAKE_OSX_DEVELOPER_DIR} CACHE PATH "When CMAKE_OSX_DEVELOPER_DIR is set, its value will be used instead of the system-wide active developer directory.")
+set(CMAKE_OSX_DEVELOPER_DIR ${CMAKE_OSX_DEVELOPER_DIR})
 
 execute_process(COMMAND xcrun --sdk ${CMAKE_OSX_SYSROOT} --show-sdk-path
                 OUTPUT_VARIABLE CMAKE_OSX_SDKROOT_DIR
                 OUTPUT_STRIP_TRAILING_WHITESPACE)
-set(CMAKE_OSX_SDKROOT_DIR ${CMAKE_OSX_SDKROOT_DIR} CACHE PATH "Specifies the default SDK to be used when looking up tools (some tools may have SDK specific versions).")
+set(CMAKE_OSX_SDKROOT_DIR ${CMAKE_OSX_SDKROOT_DIR})
 
 set(ENV{DEVELOPER_DIR} ${CMAKE_OSX_DEVELOPER_DIR})
 set(ENV{SDKROOT} ${CMAKE_OSX_SDKROOT_DIR})
@@ -230,7 +230,7 @@ macro(xcrun_find_program _program _variable)
   execute_process(COMMAND xcrun --find ${_program}
                   OUTPUT_VARIABLE _program_path
                   OUTPUT_STRIP_TRAILING_WHITESPACE)
-  set(${_variable} ${_program_path} CACHE FILEPATH "Path to ${_program}.")
+  set(${_variable} ${_program_path})
 endmacro()
 
 xcrun_find_program(clang CMAKE_ASM_COMPILER)
@@ -241,38 +241,89 @@ xcrun_find_program(ld CMAKE_LINKER)
 xcrun_find_program(ar CMAKE_AR)
 xcrun_find_program(ranlib CMAKE_RANLIB)
 
+set(CMAKE_C_FLAGS_INIT "")
+set(CMAKE_CXX_FLAGS_INIT "")
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS_INIT}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT}")
+
+set(CLANG_COMMON_FLAGS "")
+
 foreach(arch ${_archs})
-  if(NOT CMAKE_ASM_FLAGS MATCHES "-arch ${arch}")
-    set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -arch ${arch}" CACHE STRING "asm flags.")
-  endif()
-  if(NOT CMAKE_C_FLAGS MATCHES "-arch ${arch}")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -arch ${arch}" CACHE STRING "c flags.")
-  endif()
-  if(NOT CMAKE_CXX_FLAGS MATCHES "-arch ${arch}")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -arch ${arch}" CACHE STRING "c++ flags.")
-  endif()
+  set(CLANG_COMMON_FLAGS "${CLANG_COMMON_FLAGS} -arch ${arch}")
 endforeach()
+
+set(CLANG_COMMON_FLAGS "${CLANG_COMMON_FLAGS} -fno-common -fblocks")
+
+if(NOT DEFINED CMAKE_CLANG_ENABLE_MODULES)
+  set(CMAKE_CLANG_ENABLE_MODULES ON CACHE BOOL "Enable the modules language feature.")
+endif()
+
+if(NOT DEFINED CMAKE_CLANG_MODULES_AUTOLINK)
+  set(CMAKE_CLANG_MODULES_AUTOLINK ON CACHE BOOL "Enable the autolink language feature.")
+endif()
+
+if(NOT DEFINED CMAKE_CLANG_DEFINES_MODULE)
+  set(CMAKE_CLANG_DEFINES_MODULE ON CACHE BOOL "Treated as defining its own module.")
+endif()
+
+if(NOT DEFINED CMAKE_CLANG_PRODUCT_MODULE_NAME)
+  set(CMAKE_CLANG_PRODUCT_MODULE_NAME "" CACHE STRING "The name to use for the source code module constructed for this target, and which will be used to import the module in implementation source files.")
+endif()
+
+if(NOT DEFINED CMAKE_CLANG_MODULE_MAP_FILE)
+  set(CMAKE_CLANG_MODULE_MAP_FILE "" CACHE STRING "Load this module map file.")
+endif()
+
+if(NOT DEFINED CMAKE_CLANG_BUILTIN_MODULE_MAP)
+  set(CMAKE_CLANG_BUILTIN_MODULE_MAP ON CACHE BOOL "Load the clang builtins module map file.")
+endif()
+
+if(CMAKE_CLANG_ENABLE_MODULES)
+  set(CLANG_MODULE_FLAGS "")
+
+  if(CMAKE_CLANG_DEFINES_MODULE)
+    if(NOT CMAKE_CLANG_PRODUCT_MODULE_NAME STREQUAL "")
+      set(CLANG_MODULE_FLAGS "${CLANG_MODULE_FLAGS} -fmodule-name=${CMAKE_CLANG_PRODUCT_MODULE_NAME}")
+    endif()
+
+    if(NOT CMAKE_CLANG_MODULE_MAP_FILE STREQUAL "")
+      set(CLANG_MODULE_FLAGS "${CLANG_MODULE_FLAGS} -fmodule-map-file=${CMAKE_CLANG_MODULE_MAP_FILE}")
+    endif()
+  endif()
+
+  if(CMAKE_CLANG_BUILTIN_MODULE_MAP)
+    set(CLANG_MODULE_FLAGS "${CLANG_MODULE_FLAGS} -fbuiltin-module-map")
+  endif()
+
+  if(CMAKE_CLANG_MODULES_AUTOLINK)
+    set(CLANG_MODULE_FLAGS "${CLANG_MODULE_FLAGS} -fautolink")
+  endif()
+
+  set(CMAKE_C_FLAGS "${CLANG_COMMON_FLAGS} -fmodules ${CLANG_MODULE_FLAGS}")
+  set(CMAKE_CXX_FLAGS "${CLANG_COMMON_FLAGS} -fcxx-modules ${CLANG_MODULE_FLAGS}")
+endif()
 
 message(STATUS "Build for ${_triple} contains ${_archs}, using sdk ${CMAKE_OSX_SYSROOT}")
 
 if(NOT DEFINED CMAKE_C_STANDARD)
-  set(CMAKE_C_STANDARD 11 CACHE STRING "The C standard whose features are requested to build this target.")
+  set(CMAKE_C_STANDARD 11)
 endif()
 
 if(NOT DEFINED CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14 CACHE STRING "The C++ standard whose features are requested to build this target.")
+  set(CMAKE_CXX_STANDARD 14)
 endif()
 
 if(NOT DEFINED CMAKE_C_EXTENSIONS)
-  set(CMAKE_C_EXTENSIONS ON CACHE STRING "Specifying whether C compiler specific extensions are requested.")
+  set(CMAKE_C_EXTENSIONS ON)
 endif()
 
 if(NOT DEFINED CMAKE_CXX_EXTENSIONS)
-  set(CMAKE_CXX_EXTENSIONS ON CACHE STRING "Specifying whether C++ compiler specific extensions are requested.")
+  set(CMAKE_CXX_EXTENSIONS ON)
 endif()
 
 if(NOT DEFINED CMAKE_Swift_LANGUAGE_VERSION)
-  set(CMAKE_Swift_LANGUAGE_VERSION 5 CACHE STRING "Set to the Swift language version number. If not set, the oldest legacy version known to be available in the host Xcode version is assumed.")
+  set(CMAKE_Swift_LANGUAGE_VERSION 5)
 endif()
 
 macro(aux_swift_source_directory _dir _variable)
