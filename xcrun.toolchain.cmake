@@ -329,3 +329,6 @@ endif()
 macro(aux_swift_source_directory _dir _variable)
   file(GLOB ${_variable} ${_dir}/*.swift)
 endmacro()
+
+message(STATUS "xcrun toolchain C flags: ${CMAKE_C_FLAGS}")
+message(STATUS "xcrun toolchain C++ flags: ${CMAKE_CXX_FLAGS}")
