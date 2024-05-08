@@ -256,7 +256,7 @@ endforeach()
 set(CLANG_COMMON_FLAGS "${CLANG_COMMON_FLAGS} -fno-common -fblocks")
 
 if(NOT DEFINED CMAKE_CLANG_ENABLE_MODULES)
-  set(CMAKE_CLANG_ENABLE_MODULES ON CACHE BOOL "Enable the modules language feature.")
+  set(CMAKE_CLANG_ENABLE_MODULES OFF CACHE BOOL "Enable the modules language feature.")
 endif()
 
 if(NOT DEFINED CMAKE_CLANG_MODULES_AUTOLINK)
@@ -300,8 +300,8 @@ if(CMAKE_CLANG_ENABLE_MODULES)
     set(CLANG_MODULE_FLAGS "${CLANG_MODULE_FLAGS} -fautolink")
   endif()
 
-  set(CMAKE_C_FLAGS "${CLANG_COMMON_FLAGS} -fmodules ${CLANG_MODULE_FLAGS}")
-  set(CMAKE_CXX_FLAGS "${CLANG_COMMON_FLAGS} -fcxx-modules ${CLANG_MODULE_FLAGS}")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fmodules ${CLANG_MODULE_FLAGS}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcxx-modules ${CLANG_MODULE_FLAGS}")
 endif()
 
 message(STATUS "Build for ${_triple} contains ${_archs}, using sdk ${CMAKE_OSX_SYSROOT}")
@@ -329,6 +329,9 @@ endif()
 macro(aux_swift_source_directory _dir _variable)
   file(GLOB ${_variable} ${_dir}/*.swift)
 endmacro()
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CLANG_COMMON_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CLANG_COMMON_FLAGS}")
 
 message(STATUS "xcrun toolchain C flags: ${CMAKE_C_FLAGS}")
 message(STATUS "xcrun toolchain C++ flags: ${CMAKE_CXX_FLAGS}")
